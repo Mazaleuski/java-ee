@@ -16,11 +16,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MerchantService {
 
-    public BankAccount addBankAccount(String id, String bankAccountNum) throws IOException, IllegalArgumentException, MerchantNotFoundException {
-        Merchant m = getMerchantById(id);
+    public BankAccount addBankAccount(String merchantId, String bankAccountNum) throws IOException, IllegalArgumentException, MerchantNotFoundException {
+        Merchant m = getMerchantById(merchantId);
         AtomicReference<BankAccount> ba = new AtomicReference<>();
         if (bankAccountNum.matches("[0-9a-zA-Z]{10}")) {
-            Optional<BankAccount> o = CRUDUtils.getMerchantBankAccounts(id).stream()
+            Optional<BankAccount> o = CRUDUtils.getMerchantBankAccounts(merchantId).stream()
                     .filter(b -> b.getAccountNumber().equals(bankAccountNum)).findFirst();
             o.ifPresentOrElse(
                     (n) -> {

@@ -5,6 +5,7 @@ import by.teachmeskills.ps.exceptions.MerchantNotFoundException;
 import by.teachmeskills.ps.exceptions.NoBankAccountsFoundException;
 import by.teachmeskills.ps.model.Merchant;
 import by.teachmeskills.ps.service.MerchantService;
+import by.teachmeskills.ps.utils.ValidatorUtil;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -34,7 +35,7 @@ public class Application {
                     case 1 -> {
                         System.out.println("Enter merchant id:");
                         String id = scanner.next();
-                        if (id.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
+                        if (ValidatorUtil.validationId(id)) {
                             try {
                                 ms.getMerchantBankAccounts(id).forEach(System.out::print);
                             } catch (NoBankAccountsFoundException e) {
@@ -101,7 +102,7 @@ public class Application {
                     case 8 -> {
                         System.out.println("Enter merchant id:");
                         String id = scanner.next();
-                        if (id.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
+                        if (ValidatorUtil.validationId(id)) {
                             ms.deleteMerchant(id);
                             System.out.println("Merchant with id " + id + " deleted.");
                         } else {
