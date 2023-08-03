@@ -52,9 +52,9 @@ public class LoginServlet extends HttpServlet {
             System.out.println(e.getMessage());
         }
         if (user != null) {
-            req.getSession().setAttribute("categories", getCategoriesFromDB());
+            getServletContext().setAttribute("categories", getCategoriesFromDB());
             req.getSession().setAttribute("user", user);
-            resp.sendRedirect("/home.jsp");
+            req.getRequestDispatcher("/home.jsp").forward(req,resp);
         } else {
             req.getRequestDispatcher("/login.jsp").forward(req, resp);
         }

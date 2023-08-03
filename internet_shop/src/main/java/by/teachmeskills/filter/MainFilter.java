@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter("/home.jsp")
+@WebFilter("/home")
 public class MainFilter implements Filter {
 
     @Override
@@ -21,10 +21,9 @@ public class MainFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
-        String loginURI = request.getContextPath() + "/login.jsp";
+        String loginURI = request.getContextPath() + "/login";
         boolean loggedIn = session != null && session.getAttribute("user") != null;
         boolean loginRequest = request.getRequestURI().equals(loginURI);
-
         if (loggedIn || loginRequest) {
             filterChain.doFilter(request, response);
         } else {
