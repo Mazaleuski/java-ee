@@ -1,0 +1,9 @@
+body {
+    background-color: darkslategrey;
+    text-align: center;
+}
+h1, h2 {
+    font-family: consolas, monospace;
+    color: darkseagreen;
+    font-weight: normal;
+}
