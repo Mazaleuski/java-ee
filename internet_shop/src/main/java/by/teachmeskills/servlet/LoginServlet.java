@@ -1,10 +1,7 @@
 package by.teachmeskills.servlet;
 
 import by.teachmeskills.listener.DBConnectionManager;
-import by.teachmeskills.model.Category;
-import by.teachmeskills.model.Product;
 import by.teachmeskills.model.User;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,17 +15,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+    private static final String GET_USER = "SELECT * FROM users WHERE name=? and password=?";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher("login.jsp");
-        rd.forward(req, resp);
+        req.getRequestDispatcher("login.jsp").forward(req, resp);
     }
 
     @Override
@@ -41,7 +35,7 @@ public class LoginServlet extends HttpServlet {
         try {
             DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
             Connection connection = dbConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE name=? and password=?");
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_USER);
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
             ResultSet rs = preparedStatement.executeQuery();
@@ -52,48 +46,10 @@ public class LoginServlet extends HttpServlet {
             System.out.println(e.getMessage());
         }
         if (user != null) {
-            getServletContext().setAttribute("categories", getCategoriesFromDB());
             req.getSession().setAttribute("user", user);
-            req.getRequestDispatcher("/home.jsp").forward(req,resp);
+            req.getRequestDispatcher("/home").forward(req, resp);
         } else {
             req.getRequestDispatcher("/login.jsp").forward(req, resp);
         }
-    }
-
-    private List<Category> getCategoriesFromDB() {
-        List<Category> categories = new ArrayList<>();
-        ServletContext ctx = getServletContext();
-        try {
-            DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
-            Connection connection = dbConnectionManager.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM categories");
-            while (rs.next()) {
-                categories.add(Category.builder().id(rs.getString(1)).name(rs.getString(2))
-                        .imageName(rs.getString(3)).productList(getProductByIdCategory(rs.getString(1))).build());
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return categories;
-    }
-
-    private List<Product> getProductByIdCategory(String id) {
-        List<Product> products = new ArrayList<>();
-        ServletContext ctx = getServletContext();
-        try {
-            DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
-            Connection connection = dbConnectionManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM products WHERE category_id=?");
-            preparedStatement.setString(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                products.add(Product.builder().id(rs.getInt(1)).name(rs.getString(2))
-                        .description(rs.getString(3)).price(rs.getInt(4)).imageName(rs.getString(6)).build());
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return products;
     }
 }

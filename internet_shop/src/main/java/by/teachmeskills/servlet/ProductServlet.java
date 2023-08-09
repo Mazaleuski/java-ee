@@ -17,6 +17,9 @@ import java.sql.SQLException;
 
 @WebServlet("/product")
 public class ProductServlet extends HttpServlet {
+
+    private static final String GET_PRODUCTS_BY_ID = "SELECT * FROM products WHERE id=?";
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String productId = req.getParameter("product_id");
@@ -25,17 +28,17 @@ public class ProductServlet extends HttpServlet {
         try {
             DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
             Connection connection = dbConnectionManager.getConnection();
-            PreparedStatement productsStatement = connection.prepareStatement("SELECT * FROM products WHERE id=?");
+            PreparedStatement productsStatement = connection.prepareStatement(GET_PRODUCTS_BY_ID);
             productsStatement.setString(1, productId);
             ResultSet productResultSet = productsStatement.executeQuery();
             if (productResultSet.next()) {
-                product=Product.builder().id(productResultSet.getInt(1)).name(productResultSet.getString(2))
+                product = Product.builder().id(productResultSet.getInt(1)).name(productResultSet.getString(2))
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build();
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         req.setAttribute("product", product);
-        req.getRequestDispatcher("/product.jsp").forward(req,resp);
+        req.getRequestDispatcher("/product.jsp").forward(req, resp);
     }
 }

@@ -15,7 +15,7 @@
 <nav class="navbar navbar-light">
     <div class="container-fluid">
         <form class="form-inline">
-            <a href="home.jsp">
+            <a href="${pageContext.request.contextPath}/home">
                 <button class="btn btn-outline-success" type="button">Главная</button>
             </a>
         </form>
@@ -30,28 +30,29 @@
     </div>
 </nav>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-<h2 style="text-align: center">${category}</h2>
-<div class="container-fluid mb-4">
-    <c:forEach items="${products}" var="product">
-        <div class="card w-25 m-1" type="product">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col m-1"><a href="${contextPath}/${category}?product_id=${product.getId()}"><img
-                            class="card-img"
-                            style="width:140px;height:140px"
-                            src="${contextPath}/images/mobile/${product.getImageName()}"
-                            alt=${product.getImageName()}></a></div>
-                    <div class="col m-1" style="text-align: center"><p></p>
-                        <p>${product.getName()}</p>
-                        <p>${product.getDescription()}</p>
-                        <p>${product.getPrice()}</p></div>
+<div style="text-align: center">${message}</div>
+<c:if test="${not empty products}">
+    <h2 style="text-align: center">${category}</h2>
+    <div class="container-fluid mb-4">
+        <c:forEach items="${products}" var="product">
+            <div class="card w-25 m-1" type="product">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col m-1"><a href="${contextPath}/product?product_id=${product.getId()}"><img
+                                class="card-img"
+                                style="width:140px;height:140px"
+                                src="${contextPath}/images/mobile/${product.getImageName()}"
+                                alt=${product.getImageName()}></a></div>
+                        <div class="col m-1" style="text-align: center"><p></p>
+                            <a href="${contextPath}/product?product_id=${product.getId()}"><p>${product.getName()}</p>
+                            </a>
+                            <p>${product.getDescription()}</p>
+                            <p>${product.getPrice()}</p></div>
+                    </div>
                 </div>
-
-
             </div>
-
-        </div>
-    </c:forEach>
-</div>
+        </c:forEach>
+    </div>
+</c:if>
 </body>
 </html>

@@ -19,6 +19,8 @@ import java.util.List;
 
 @WebServlet("/category")
 public class CategoryServlet extends HttpServlet {
+    private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE category_id=?";
+    private static final String GET_CATEGORY_NAME_BY_ID = "SELECT name FROM categories WHERE id=?";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,8 +31,8 @@ public class CategoryServlet extends HttpServlet {
         try {
             DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
             Connection connection = dbConnectionManager.getConnection();
-            PreparedStatement productsStatement = connection.prepareStatement("SELECT * FROM products WHERE category_id=?");
-            PreparedStatement categoriesStatement = connection.prepareStatement("SELECT * FROM categories WHERE id=?");
+            PreparedStatement productsStatement = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY_ID);
+            PreparedStatement categoriesStatement = connection.prepareStatement(GET_CATEGORY_NAME_BY_ID);
             productsStatement.setString(1, categoryId);
             categoriesStatement.setString(1, categoryId);
             ResultSet productResultSet = productsStatement.executeQuery();
@@ -40,7 +42,7 @@ public class CategoryServlet extends HttpServlet {
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build());
             }
             if (categoryResultSet.next()) {
-                categoryName = categoryResultSet.getString(2);
+                categoryName = categoryResultSet.getString(1);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -50,7 +52,8 @@ public class CategoryServlet extends HttpServlet {
             req.setAttribute("products", productList);
             req.getRequestDispatcher("/category.jsp").forward(req, resp);
         } else {
-            req.getRequestDispatcher("/home.jsp").forward(req, resp);
+            req.setAttribute("message", "В данной категории пока нет товаров");
+            req.getRequestDispatcher("/category.jsp").forward(req, resp);
         }
     }
 }
