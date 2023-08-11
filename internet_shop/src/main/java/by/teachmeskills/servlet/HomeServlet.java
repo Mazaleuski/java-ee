@@ -1,9 +1,8 @@
 package by.teachmeskills.servlet;
 
-import by.teachmeskills.listener.DBConnectionManager;
 import by.teachmeskills.model.Category;
 import by.teachmeskills.model.Product;
-import jakarta.servlet.ServletContext;
+import by.teachmeskills.util.ConnectionPool;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +21,7 @@ import java.util.List;
 public class HomeServlet extends HttpServlet {
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM categories";
     private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE category_id=?";
+    private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,20 +38,18 @@ public class HomeServlet extends HttpServlet {
         req.getRequestDispatcher("/home.jsp").forward(req, resp);
     }
 
-
     private List<Category> getCategoriesFromDB() {
         List<Category> categories = new ArrayList<>();
-        ServletContext ctx = getServletContext();
         try {
-            DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
-            Connection connection = dbConnectionManager.getConnection();
+            Connection connection = connectionPool.getConnection();
             Statement statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(GET_ALL_CATEGORIES);
+            connectionPool.closeConnection(connection);
             while (rs.next()) {
                 categories.add(Category.builder().id(rs.getString(1)).name(rs.getString(2))
                         .imageName(rs.getString(3)).productList(getProductByIdCategory(rs.getString(1))).build());
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return categories;
@@ -60,18 +57,17 @@ public class HomeServlet extends HttpServlet {
 
     private List<Product> getProductByIdCategory(String id) {
         List<Product> products = new ArrayList<>();
-        ServletContext ctx = getServletContext();
         try {
-            DBConnectionManager dbConnectionManager = (DBConnectionManager) ctx.getAttribute("DBManager");
-            Connection connection = dbConnectionManager.getConnection();
+            Connection connection = connectionPool.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY_ID);
             preparedStatement.setString(1, id);
             ResultSet rs = preparedStatement.executeQuery();
+            connectionPool.closeConnection(connection);
             while (rs.next()) {
                 products.add(Product.builder().id(rs.getInt(1)).name(rs.getString(2))
                         .description(rs.getString(3)).price(rs.getInt(4)).imageName(rs.getString(6)).build());
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return products;

@@ -1,7 +1,7 @@
 DROP SCHEMA IF EXISTS shop_db;
 CREATE SCHEMA IF NOT EXISTS shop_db;
 USE
-    shop_db;
+shop_db;
 
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS categories;
@@ -11,13 +11,15 @@ CREATE TABLE `shop_db`.`users`
 (
     `id`       INT         NOT NULL AUTO_INCREMENT,
     `name`     VARCHAR(45) NOT NULL,
+    `surname`  VARCHAR(45) NOT NULL,
+    `birthday` DATE NULL,
+    `email`    VARCHAR(45) NOT NULL,
     `password` VARCHAR(45) NOT NULL,
-    `surname`  VARCHAR(45) NULL,
-    `balance`  INT         NOT NULL,
+    `balance`  INT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
     UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
-    UNIQUE INDEX `surname_UNIQUE` (`surname` ASC) VISIBLE
+    UNIQUE INDEX `surname_UNIQUE` (`surname` ASC) VISIBLE,
+    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
 );
 
 CREATE TABLE `shop_db`.`categories`
