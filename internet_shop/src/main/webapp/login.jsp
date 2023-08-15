@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -13,12 +14,22 @@
 <body><h2 style="text-align:center">Вход</h2>
 <p style="text-align:center">Введите имя пользователя и пароль</p>
 <div class="container">
+    <c:if test="${not empty message}">
+        <p style="text-align: center" class="text-danger">${message}</p>
+    </c:if>
+    <c:if test="${not empty error}">
+        <p style="text-align: center" class="text-danger">${error}</p>
+        <div class="form-group" style="text-align: center">
+            <a href="${pageContext.request.contextPath}/register">
+                <button class="btn btn-danger" type="button">Регистрация</button>
+            </a></div>
+    </c:if>
     <div class="row">
         <div class="col-md-8 offset-md-5">
             <form method="post" action="login" class="needs-validation" novalidate>
                 <div class="form-group">
                     <label for="email">Пользователь:</label>
-                    <input type="text" class="form-control w-25" id="email" placeholder="Введите имя"
+                    <input type="text" class="form-control w-25" id="email" placeholder="Введите почту"
                            name="email"
                            required>
                     <div class="invalid-feedback">Поле не может быть пустым!</div>
