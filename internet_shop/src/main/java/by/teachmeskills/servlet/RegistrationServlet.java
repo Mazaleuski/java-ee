@@ -1,7 +1,6 @@
 package by.teachmeskills.servlet;
 
 import by.teachmeskills.util.ConnectionPool;
-import by.teachmeskills.util.ValidatorUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,10 +12,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import static by.teachmeskills.util.ValidatorUtil.validationBirthday;
+import static by.teachmeskills.util.ValidatorUtil.validationEmail;
+import static by.teachmeskills.util.ValidatorUtil.validationNameAndSurname;
+
 @WebServlet("/register")
 public class RegistrationServlet extends HttpServlet {
 
-    private static final ValidatorUtil validatorUtil = ValidatorUtil.getInstance();
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String GET_USER = "SELECT * FROM users WHERE email = ? and password=?";
     private static final String ADD_USER = "INSERT INTO users (name,surname,birthday,email,password) values (?,?,?,?,?)";
@@ -33,8 +35,8 @@ public class RegistrationServlet extends HttpServlet {
         String birthday = req.getParameter("birthday");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        if (validatorUtil.validationNameAndSurname(name) && validatorUtil.validationNameAndSurname(surname)
-                && validatorUtil.validationEmail(email) && validatorUtil.validationBirthday(birthday)) {
+        if (validationNameAndSurname(name) && validationNameAndSurname(surname)
+                && validationEmail(email) && validationBirthday(birthday)) {
             try {
                 Connection connection = connectionPool.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(GET_USER);
