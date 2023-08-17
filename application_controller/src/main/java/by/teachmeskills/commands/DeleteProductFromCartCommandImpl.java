@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpSession;
 import static by.teachmeskills.enums.PagesPathEnum.CART_PAGE;
 import static by.teachmeskills.enums.RequestParamsEnum.PRODUCT_ID;
 import static by.teachmeskills.enums.RequestParamsEnum.SHOPPING_CART;
-import static by.teachmeskills.enums.RequestParamsEnum.SHOPPING_CART_PRODUCTS;
 
 public class DeleteProductFromCartCommandImpl implements BaseCommand {
     @Override
@@ -18,7 +17,7 @@ public class DeleteProductFromCartCommandImpl implements BaseCommand {
         Cart cart = (Cart) session.getAttribute(SHOPPING_CART.getValue());
 
         cart.removeProduct(Integer.parseInt(productId));
-        request.setAttribute(SHOPPING_CART_PRODUCTS.getValue(), cart.getProducts());
+        session.setAttribute(SHOPPING_CART.getValue(), cart);
 
         return CART_PAGE.getPath();
     }

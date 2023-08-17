@@ -13,7 +13,6 @@ public enum RequestParamsEnum {
     CATEGORY_ID("category_id"),
     PRODUCT("product"),
     PRODUCTS("products"),
-    SHOPPING_CART_PRODUCTS("cartProductsList"),
     PRODUCT_ID("product_id");
 
     private final String value;

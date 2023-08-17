@@ -25,15 +25,15 @@ public class CategoryRedirectCommandImpl implements BaseCommand {
         String categoryId = request.getParameter(CATEGORY_ID.getValue());
         String categoryName = null;
         List<Product> productList = new ArrayList<>();
+        Connection connection = null;
         try {
-            Connection connection = connectionPool.getConnection();
+            connection = connectionPool.getConnection();
             PreparedStatement productsStatement = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY_ID);
             PreparedStatement categoriesStatement = connection.prepareStatement(GET_CATEGORY_NAME_BY_ID);
             productsStatement.setString(1, categoryId);
             categoriesStatement.setString(1, categoryId);
             ResultSet productResultSet = productsStatement.executeQuery();
             ResultSet categoryResultSet = categoriesStatement.executeQuery();
-            connectionPool.closeConnection(connection);
             while (productResultSet.next()) {
                 productList.add(Product.builder().id(productResultSet.getInt(1)).name(productResultSet.getString(2))
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build());
@@ -43,6 +43,12 @@ public class CategoryRedirectCommandImpl implements BaseCommand {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            try {
+                connectionPool.closeConnection(connection);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
         if (productList.size() != 0) {
             request.setAttribute(PRODUCTS.getValue(), productList);

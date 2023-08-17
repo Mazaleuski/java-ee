@@ -9,11 +9,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Map;
 
 import static by.teachmeskills.utils.HttpRequestParamValidator.validateParamNotNull;
-import static by.teachmeskills.utils.ValidatorUtil.validationBirthday;
-import static by.teachmeskills.utils.ValidatorUtil.validationEmail;
-import static by.teachmeskills.utils.ValidatorUtil.validationNameAndSurname;
+import static by.teachmeskills.utils.ValidatorUtil.validateUserData;
 
 public class RegistrationPageCommandImpl implements BaseCommand {
 
@@ -38,10 +37,12 @@ public class RegistrationPageCommandImpl implements BaseCommand {
         } catch (CommandException e) {
             return PagesPathEnum.REGISTRATION_PAGE.getPath();
         }
-        if (validationNameAndSurname(name) && validationNameAndSurname(surname)
-                && validationEmail(email) && validationBirthday(birthday)) {
+        Map<String, String> data = Map.of("name", name, "surname", surname, "birthday", birthday, "email", email);
+
+        if (validateUserData(data)) {
+            Connection connection = null;
             try {
-                Connection connection = connectionPool.getConnection();
+                connection = connectionPool.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(GET_USER);
                 preparedStatement.setString(1, email);
                 preparedStatement.setString(2, password);
@@ -60,9 +61,15 @@ public class RegistrationPageCommandImpl implements BaseCommand {
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+            } finally {
+                try {
+                    connectionPool.closeConnection(connection);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         } else {
-            request.setAttribute("message", "Некорректные данные.");
+            request.setAttribute("info", "Некорректные данные.");
         }
         return PagesPathEnum.REGISTRATION_PAGE.getPath();
     }
