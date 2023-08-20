@@ -8,6 +8,8 @@ import by.teachmeskills.model.Product;
 import by.teachmeskills.model.User;
 import by.teachmeskills.utils.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ import java.util.List;
 import static by.teachmeskills.utils.HttpRequestParamValidator.validateParamNotNull;
 
 public class SignInCommandImpl implements BaseCommand {
+    private final static Logger log = LogManager.getLogger(SignInCommandImpl.class);
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String GET_USER = "SELECT * FROM users WHERE email=? and password=?";
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM categories";
@@ -43,22 +46,23 @@ public class SignInCommandImpl implements BaseCommand {
             ResultSet rs = preparedStatement.executeQuery();
             connectionPool.closeConnection(connection);
             if (rs.next()) {
-                user = User.builder().name(rs.getString(1)).surname(rs.getString(2))
-                        .email(rs.getString(4))
-                        .password(rs.getString(5)).build();
+                user = User.builder().name(rs.getString(2)).surname(rs.getString(3))
+                        .birthDay(rs.getString(4))
+                        .email(rs.getString(5)).build();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         return checkReceivedUser(user, request);
     }
+
     private String checkReceivedUser(User user, HttpServletRequest request) {
-        if (user != null){
+        if (user != null) {
             request.getSession().setAttribute(RequestParamsEnum.USER.getValue(), user);
             request.setAttribute("categories", getCategoriesFromDB());
             return PagesPathEnum.HOME_PAGE.getPath();
         } else {
-            request.setAttribute("error","Пользователь не зарегистрирован!");
+            request.setAttribute("error", "Пользователь не зарегистрирован!");
             return PagesPathEnum.LOGIN_PAGE.getPath();
         }
     }
@@ -75,7 +79,7 @@ public class SignInCommandImpl implements BaseCommand {
                         .imageName(rs.getString(3)).productList(getProductByIdCategory(rs.getString(1))).build());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         return categories;
     }
@@ -93,7 +97,7 @@ public class SignInCommandImpl implements BaseCommand {
                         .description(rs.getString(3)).price(rs.getInt(4)).imageName(rs.getString(6)).build());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         return products;
     }

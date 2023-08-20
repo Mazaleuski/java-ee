@@ -1,5 +1,6 @@
 package by.teachmeskills.utils;
 
+import by.teachmeskills.commands.AccountPageCommandImpl;
 import by.teachmeskills.commands.AddProductToCartCommandImpl;
 import by.teachmeskills.commands.BaseCommand;
 import by.teachmeskills.commands.CategoryRedirectCommandImpl;
@@ -28,6 +29,7 @@ public class CommandFactory {
         COMMAND_LIST.put(CommandsEnum.REDIRECT_PRODUCT_COMMAND.getCommand(), new RedirectProductPageCommandImpl());
         COMMAND_LIST.put(CommandsEnum.REGISTRATION_PAGE_COMMAND.getCommand(), new RegistrationPageCommandImpl());
         COMMAND_LIST.put(CommandsEnum.DELETE_PRODUCT_FROM_CART.getCommand(), new DeleteProductFromCartCommandImpl());
+        COMMAND_LIST.put(CommandsEnum.ACCOUNT_PAGE_COMMAND.getCommand(), new AccountPageCommandImpl());
     }
 
     public static BaseCommand defineCommand(HttpServletRequest request) {

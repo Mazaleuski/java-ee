@@ -3,6 +3,8 @@ package by.teachmeskills.commands;
 import by.teachmeskills.model.Product;
 import by.teachmeskills.util.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +17,7 @@ import static by.teachmeskills.enums.RequestParamsEnum.PRODUCT_ID;
 public class RedirectProductPageCommandImpl implements BaseCommand{
     private static final String GET_PRODUCTS_BY_ID = "SELECT * FROM products WHERE id=?";
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
-
+    private final static Logger log = LogManager.getLogger(RedirectProductPageCommandImpl.class);
     @Override
     public String execute(HttpServletRequest request) {
         String productId = request.getParameter(PRODUCT_ID.getValue());
@@ -31,7 +33,7 @@ public class RedirectProductPageCommandImpl implements BaseCommand{
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         request.setAttribute(PRODUCT.getValue(), product);
         return PRODUCT_PAGE.getPath();

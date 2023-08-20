@@ -5,6 +5,8 @@ import by.teachmeskills.enums.RequestParamsEnum;
 import by.teachmeskills.model.Product;
 import by.teachmeskills.utils.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +18,7 @@ import static by.teachmeskills.enums.RequestParamsEnum.CATEGORY_ID;
 import static by.teachmeskills.enums.RequestParamsEnum.PRODUCTS;
 
 public class CategoryRedirectCommandImpl implements BaseCommand {
+    private final static Logger log = LogManager.getLogger(CategoryRedirectCommandImpl.class);
     private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE category_id=?";
     private static final String GET_CATEGORY_NAME_BY_ID = "SELECT name FROM categories WHERE id=?";
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -42,7 +45,7 @@ public class CategoryRedirectCommandImpl implements BaseCommand {
                 categoryName = categoryResultSet.getString(1);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         if (productList.size() != 0) {
             request.setAttribute(PRODUCTS.getValue(), productList);

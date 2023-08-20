@@ -5,6 +5,8 @@ import by.teachmeskills.model.Category;
 import by.teachmeskills.model.Product;
 import by.teachmeskills.utils.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +20,7 @@ public class HomePageCommandImpl implements BaseCommand {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String GET_ALL_CATEGORIES = "SELECT * FROM categories";
     private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE category_id=?";
+    private final static Logger log = LogManager.getLogger(HomePageCommandImpl.class);
 
     @Override
     public String execute(HttpServletRequest request) {
@@ -37,7 +40,7 @@ public class HomePageCommandImpl implements BaseCommand {
                         .imageName(rs.getString(3)).productList(getProductByIdCategory(rs.getString(1))).build());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         return categories;
     }
@@ -55,7 +58,7 @@ public class HomePageCommandImpl implements BaseCommand {
                         .description(rs.getString(3)).price(rs.getInt(4)).imageName(rs.getString(6)).build());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         }
         return products;
     }
