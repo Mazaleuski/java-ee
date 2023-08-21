@@ -22,18 +22,24 @@ public class RedirectProductPageCommandImpl implements BaseCommand{
     public String execute(HttpServletRequest request) {
         String productId = request.getParameter(PRODUCT_ID.getValue());
         Product product = null;
+        Connection connection = null;
         try {
-            Connection connection = connectionPool.getConnection();
+            connection = connectionPool.getConnection();
             PreparedStatement productsStatement = connection.prepareStatement(GET_PRODUCTS_BY_ID);
             productsStatement.setString(1, productId);
             ResultSet productResultSet = productsStatement.executeQuery();
-            connectionPool.closeConnection(connection);
             if (productResultSet.next()) {
                 product = Product.builder().id(productResultSet.getInt(1)).name(productResultSet.getString(2))
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build();
             }
         } catch (Exception e) {
             log.warn(e.getMessage());
+        } finally {
+            try {
+                connectionPool.closeConnection(connection);
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+            }
         }
         request.setAttribute(PRODUCT.getValue(), product);
         return PRODUCT_PAGE.getPath();

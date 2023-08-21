@@ -35,31 +35,34 @@
 <h2 style="text-align: center">Корзина</h2>
 <p></p>
 <div class="container-fluid mb-4" style="text-align: center">
-    <c:forEach items="${cartProductsList}" var="product">
-        <div class="card w-50 m-1" type="product">
-            <div class="card-body">
+    <c:if test="${not empty cart}">
+        <c:forEach items="${cart.getProducts()}" var="product">
+            <div class="card w-50 m-1" type="product">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col m-1">
-                            <img
-                                    class="card-img"
-                                    style="width:100px;height:100px"
-                                    src="${contextPath}/images/mobile/${product.getImageName()}"
-                                    alt=${product.getImageName()}></div>
-                        <div class="col m-1" style="text-align: left"><p></p>
-                            <p>${product.getName()}</p>
-                            <p>${product.getDescription()}</p>
-                            <p>${product.getPrice()}</p></div>
-                        <div class="col m-1"><a
-                                href="${contextPath}/shop?command=delete-product-from-cart&product_id=${product.getId()}">
-                            <p></p>
-                            <button class="btn btn-danger m-2" style="text-align: right" type="button">Удалить</button>
-                        </a></div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col m-1">
+                                <img
+                                        class="card-img"
+                                        style="width:100px;height:100px"
+                                        src="${contextPath}/images/mobile/${product.getImageName()}"
+                                        alt=${product.getImageName()}></div>
+                            <div class="col m-1" style="text-align: left"><p></p>
+                                <p>${product.getName()}</p>
+                                <p>${product.getDescription()}</p>
+                                <p>${product.getPrice()}</p></div>
+                            <div class="col m-1"><a
+                                    href="${contextPath}/shop?command=delete-product-from-cart&product_id=${product.getId()}">
+                                <p></p>
+                                <button class="btn btn-danger m-2" style="text-align: right" type="button">Удалить
+                                </button>
+                            </a></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </c:forEach>
+        </c:forEach>
+    </c:if>
 </div>
 <div class="container-fluid mb-4" style="text-align: center"><a href="${contextPath}/shop?command=#"
                                                                 style="text-align: right"><p></p>

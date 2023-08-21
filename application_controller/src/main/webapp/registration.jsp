@@ -14,9 +14,6 @@
 <body><h2 style="text-align:center">Регистрация</h2>
 <p></p>
 <div class="container">
-    <c:if test="${not empty message}">
-        <p style="text-align: center" class="text-danger">${message}</p>
-    </c:if>
     <c:if test="${not empty info}">
         <p style="text-align: center" class="text-danger">${info}</p>
     </c:if>
