@@ -6,6 +6,8 @@ import by.teachmeskills.model.Product;
 import by.teachmeskills.util.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +20,7 @@ import static by.teachmeskills.enums.RequestParamsEnum.SHOPPING_CART;
 
 public class AddProductToCartCommandImpl implements BaseCommand {
 
+    private final static Logger log = LogManager.getLogger(AddProductToCartCommandImpl.class);
     private static final String GET_PRODUCT_BY_ID = "SELECT * FROM products WHERE id=?";
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
 
@@ -38,12 +41,12 @@ public class AddProductToCartCommandImpl implements BaseCommand {
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         } finally {
             try {
                 connectionPool.closeConnection(connection);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.warn(e.getMessage());
             }
         }
         Cart cart;

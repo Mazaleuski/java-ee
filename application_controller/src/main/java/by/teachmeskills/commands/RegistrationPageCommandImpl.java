@@ -5,6 +5,8 @@ import by.teachmeskills.enums.RequestParamsEnum;
 import by.teachmeskills.exceptions.CommandException;
 import by.teachmeskills.util.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ public class RegistrationPageCommandImpl implements BaseCommand {
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String GET_USER = "SELECT * FROM users WHERE email = ? and password=?";
     private static final String ADD_USER = "INSERT INTO users (name,surname,birthday,email,password) values (?,?,?,?,?)";
+    private final static Logger log = LogManager.getLogger(RegistrationPageCommandImpl.class);
 
     @Override
     public String execute(HttpServletRequest request) {
@@ -35,6 +38,7 @@ public class RegistrationPageCommandImpl implements BaseCommand {
             validateParamNotNull(email);
             validateParamNotNull(password);
         } catch (CommandException e) {
+            log.warn(e.getMessage());
             return PagesPathEnum.REGISTRATION_PAGE.getPath();
         }
         Map<String, String> data = Map.of("name", name, "surname", surname, "birthday", birthday, "email", email);
@@ -60,12 +64,12 @@ public class RegistrationPageCommandImpl implements BaseCommand {
                     request.setAttribute("info", "Пользователь успешно зарегистрирован. Войдите в систему.");
                 }
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.warn(e.getMessage());
             } finally {
                 try {
                     connectionPool.closeConnection(connection);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    log.warn(e.getMessage());
                 }
             }
         } else {

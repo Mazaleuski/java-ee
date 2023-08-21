@@ -6,6 +6,8 @@ import by.teachmeskills.exceptions.CommandException;
 import by.teachmeskills.model.User;
 import by.teachmeskills.utils.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +17,7 @@ import static by.teachmeskills.utils.DataUtil.getCategoriesFromDB;
 import static by.teachmeskills.utils.HttpRequestParamValidator.validateParamNotNull;
 
 public class SignInCommandImpl implements BaseCommand {
+    private final static Logger log = LogManager.getLogger(SignInCommandImpl.class);
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static final String GET_USER = "SELECT * FROM users WHERE email=? and password=?";
 
@@ -35,17 +38,17 @@ public class SignInCommandImpl implements BaseCommand {
             preparedStatement.setString(2, password);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                user = User.builder().name(rs.getString(1)).surname(rs.getString(2))
-                        .email(rs.getString(4))
-                        .password(rs.getString(5)).build();
+                user = User.builder().name(rs.getString(2)).surname(rs.getString(3))
+                        .birthDay(rs.getString(4))
+                        .email(rs.getString(5)).build();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.warn(e.getMessage());
         } finally {
             try {
                 connectionPool.closeConnection(connection);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.warn(e.getMessage());
             }
         }
         return checkReceivedUser(user, request);
