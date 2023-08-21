@@ -1,5 +1,8 @@
 package by.teachmeskills.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,6 +23,8 @@ public class ConnectionPool {
     private static final String url;
     private static final String login;
     private static final String password;
+
+    private final static Logger log = LogManager.getLogger(ConnectionPool.class);
 
     static {
         ResourceBundle resourceBundle = ResourceBundle.getBundle(PROPERTY_FILE);
@@ -48,8 +53,9 @@ public class ConnectionPool {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 pool.add(DriverManager.getConnection(url, login, password));
             } catch (SQLException e) {
-                e.printStackTrace();
+                log.warn(e.getMessage());
             } catch (ClassNotFoundException e) {
+                log.warn(e.getMessage());
                 throw new RuntimeException(e);
             }
         }
@@ -60,6 +66,7 @@ public class ConnectionPool {
             pool.add(DriverManager.getConnection(url, login, password));
             currentConCount++;
         } catch (SQLException e) {
+            log.warn("Connection wasn't add!");
             throw new Exception("Connection wasn't add!", e);
         }
     }
@@ -73,6 +80,7 @@ public class ConnectionPool {
             connection = pool.take();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
+            log.warn("Max count of connections!");
             throw new Exception("Max count of connections!");
         }
         return connection;
@@ -87,6 +95,7 @@ public class ConnectionPool {
                 pool.put(connection);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                log.warn("Connection wasn't returned!");
                 throw new Exception("Connection wasn't returned!");
             }
         }

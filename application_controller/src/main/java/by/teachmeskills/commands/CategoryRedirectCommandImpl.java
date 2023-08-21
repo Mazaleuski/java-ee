@@ -5,6 +5,8 @@ import by.teachmeskills.enums.RequestParamsEnum;
 import by.teachmeskills.model.Product;
 import by.teachmeskills.utils.ConnectionPool;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +18,7 @@ import static by.teachmeskills.enums.RequestParamsEnum.CATEGORY_ID;
 import static by.teachmeskills.enums.RequestParamsEnum.PRODUCTS;
 
 public class CategoryRedirectCommandImpl implements BaseCommand {
+    private final static Logger log = LogManager.getLogger(CategoryRedirectCommandImpl.class);
     private static final String GET_PRODUCTS_BY_CATEGORY_ID = "SELECT * FROM products WHERE category_id=?";
     private static final String GET_CATEGORY_NAME_BY_ID = "SELECT name FROM categories WHERE id=?";
     private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
@@ -25,15 +28,15 @@ public class CategoryRedirectCommandImpl implements BaseCommand {
         String categoryId = request.getParameter(CATEGORY_ID.getValue());
         String categoryName = null;
         List<Product> productList = new ArrayList<>();
-        Connection connection = null;
         try {
-            connection = connectionPool.getConnection();
+            Connection connection = connectionPool.getConnection();
             PreparedStatement productsStatement = connection.prepareStatement(GET_PRODUCTS_BY_CATEGORY_ID);
             PreparedStatement categoriesStatement = connection.prepareStatement(GET_CATEGORY_NAME_BY_ID);
             productsStatement.setString(1, categoryId);
             categoriesStatement.setString(1, categoryId);
             ResultSet productResultSet = productsStatement.executeQuery();
             ResultSet categoryResultSet = categoriesStatement.executeQuery();
+            connectionPool.closeConnection(connection);
             while (productResultSet.next()) {
                 productList.add(Product.builder().id(productResultSet.getInt(1)).name(productResultSet.getString(2))
                         .description(productResultSet.getString(3)).price(productResultSet.getInt(4)).imageName(productResultSet.getString(6)).build());
@@ -42,13 +45,7 @@ public class CategoryRedirectCommandImpl implements BaseCommand {
                 categoryName = categoryResultSet.getString(1);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            try {
-                connectionPool.closeConnection(connection);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+            log.warn(e.getMessage());
         }
         if (productList.size() != 0) {
             request.setAttribute(PRODUCTS.getValue(), productList);
