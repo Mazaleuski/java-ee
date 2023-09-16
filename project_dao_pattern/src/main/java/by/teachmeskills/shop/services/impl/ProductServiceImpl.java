@@ -40,4 +40,9 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findByCategoryId(int id) {
         return productRepository.findByCategoryId(id);
     }
+
+    @Override
+    public List<Product> findByNameOrDescription(String search) {
+        return productRepository.findByNameOrDescription(search);
+    }
 }

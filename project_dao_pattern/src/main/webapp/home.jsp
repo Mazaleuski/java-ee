@@ -14,6 +14,24 @@
 </head>
 <body>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <form class="form-inline">
+        </form>
+        <form class="form-inline my-2 my-lg-0">
+            <a href="shop?command=search">
+                <button class="btn btn-outline-success m-1" type="button">Поиск</button>
+            </a>
+            <a href="shop?command=account">
+                <button class="btn btn-outline-success m-1" type="button">Кабинет</button>
+            </a>
+            <a href="${contextPath}/shop?command=redirect-to-shopping-cart">
+                <button class="btn btn-outline-success m-1" type="button">Корзина</button>
+            </a>
+        </form>
+    </div>
+</nav>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <p></p>
 <h1 style="text-align: center">Каталог товаров</h1>
 <p></p>

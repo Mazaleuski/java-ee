@@ -21,6 +21,9 @@
             </a>
         </form>
         <form class="form-inline my-2 my-lg-0">
+            <a href="shop?command=search">
+                <button class="btn btn-outline-success m-1" type="button">Поиск</button>
+            </a>
             <a href="${contextPath}/shop?command=account">
                 <button class="btn btn-outline-success m-1" type="button">Кабинет</button>
             </a>

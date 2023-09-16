@@ -7,7 +7,9 @@ import lombok.extern.log4j.Log4j2;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
@@ -19,6 +21,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final static String GET_ALL_PRODUCTS = "SELECT * FROM products";
     private final static String UPDATE_DESCRIPTION_AND_PRICE_BY_ID = "UPDATE products SET description = ?, price = ? WHERE id = ?";
     private static final String ADD_PRODUCT = "INSERT INTO products (name,description,price,categoryId,imagePath) values (?,?,?,?,?)";
+    private static final String GET_PRODUCT_BY_NAME_OR_DESCRIPTION = "SELECT * FROM products WHERE name LIKE ? OR description LIKE ? ORDER BY name ASC;";
 
     @Override
     public Product create(Product entity) {
@@ -135,5 +138,30 @@ public class ProductRepositoryImpl implements ProductRepository {
             log.warn(e.getMessage());
         }
         return productList;
+    }
+
+    @Override
+    public List<Product> findByNameOrDescription(String search) {
+        List<Product> products = new LinkedList<>();
+        try (Connection connection = pool.getConnection();) {
+            PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCT_BY_NAME_OR_DESCRIPTION);
+            search = "%" + search.trim() + "%";
+            preparedStatement.setString(1, search);
+            preparedStatement.setString(2, search);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                products.add(Product.builder()
+                        .id(rs.getInt(1))
+                        .name(rs.getString(2))
+                        .description(rs.getString(3))
+                        .price(rs.getInt(4))
+                        .categoryId(rs.getInt(5))
+                        .imagePath(rs.getString(6))
+                        .build());
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        }
+        return products;
     }
 }

@@ -14,7 +14,6 @@
 </head>
 <body>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
-
 <nav class="navbar navbar-light">
     <div class="container-fluid">
         <form class="form-inline">

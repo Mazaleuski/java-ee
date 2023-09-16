@@ -9,6 +9,7 @@ import by.teachmeskills.shop.commands.HomePageCommandImpl;
 import by.teachmeskills.shop.commands.RedirectProductPageCommandImpl;
 import by.teachmeskills.shop.commands.RedirectToShoppingCartImpl;
 import by.teachmeskills.shop.commands.RegistrationPageCommandImpl;
+import by.teachmeskills.shop.commands.SearchCommandImpl;
 import by.teachmeskills.shop.commands.SignInCommandImpl;
 import by.teachmeskills.shop.enums.CommandsEnum;
 import by.teachmeskills.shop.enums.RequestParamsEnum;
@@ -29,6 +30,7 @@ public class CommandFactory {
         COMMAND_LIST.put(CommandsEnum.REDIRECT_PRODUCT_COMMAND.getCommand(), new RedirectProductPageCommandImpl());
         COMMAND_LIST.put(CommandsEnum.REGISTRATION_PAGE_COMMAND.getCommand(), new RegistrationPageCommandImpl());
         COMMAND_LIST.put(CommandsEnum.DELETE_PRODUCT_FROM_CART.getCommand(), new DeleteProductFromCartCommandImpl());
+        COMMAND_LIST.put(CommandsEnum.SEARCH_PAGE_COMMAND.getCommand(), new SearchCommandImpl());
         COMMAND_LIST.put(CommandsEnum.ACCOUNT_PAGE_COMMAND.getCommand(), new AccountPageCommandImpl());
     }
 

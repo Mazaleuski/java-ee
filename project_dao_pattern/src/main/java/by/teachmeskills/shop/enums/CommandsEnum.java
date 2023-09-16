@@ -9,7 +9,8 @@ public enum CommandsEnum {
     ADD_PRODUCT_TO_CART("add-product-to-cart"),
     DELETE_PRODUCT_FROM_CART("delete-product-from-cart"),
     REGISTRATION_PAGE_COMMAND("registration"),
-    ACCOUNT_PAGE_COMMAND("account");
+    ACCOUNT_PAGE_COMMAND("account"),
+    SEARCH_PAGE_COMMAND("search");
 
     private final String command;
 

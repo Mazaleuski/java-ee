@@ -10,6 +10,7 @@ public enum RequestParamsEnum {
     COMMAND("command"),
     SHOPPING_CART("cart"),
     CATEGORY("category"),
+    CATEGORIES("categories"),
     CATEGORY_ID("category_id"),
     PRODUCT("product"),
     PRODUCTS("products"),
